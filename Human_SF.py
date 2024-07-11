@@ -19,6 +19,7 @@ class Human_SF:
         # Update the position and orientation
         self.pos = np.array([latest_state[0], latest_state[1]], dtype=np.float32)
         self.theta = np.arctan2(latest_state[3], latest_state[2])
+        self.theta = self.wrap_to_pi(self.theta)
         self.vx = latest_state[2]
         self.vy = latest_state[3]
 
@@ -58,6 +59,7 @@ class Human_SF:
             [self.initial_state[0][0], self.initial_state[0][1]], dtype=np.float32
         )
         self.theta = np.arctan2(self.initial_state[0][3], self.initial_state[0][2])
+        self.theta = self.wrap_to_pi(self.theta)
         self.vx = self.initial_state[0][2]
         self.vy = self.initial_state[0][3]
 
@@ -71,3 +73,6 @@ class Human_SF:
 
     def get_velocities(self):
         return self.vx, self.vy
+    
+    def wrap_to_pi(self, angle):
+        return (angle + np.pi) % (2 * np.pi) - np.pi
