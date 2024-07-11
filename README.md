@@ -44,8 +44,17 @@ This project is a aimed at learning a RL policy to enable cooperative transporta
 Basic usage:
 
 To run training:
-'''python3 train.py'''
-
+```Python
+    python3 train.py --learning_rate=0.0003
+```
+To run testing:
+```Python
+    python3 test.py --path_to_model="/path/to/where/the/model/is/saved/"
+```
+To test env setup:
+```Python
+    python3 train_env.py
+```
 ## Configuration
 You can configure the parameters  for the Human by passing in a [toml](https://github.com/toml-lang/toml) file to the simulator in Human_SF.py:
 ```Python
@@ -56,8 +65,6 @@ sim = psf.Simulator(
 
 
 ## Examples
-
-### Ped-ped Scenarios
 
 | ![test1](figures/HRI_1.png)          | ![test2](figures/HRI_2png.png) |
 | ----------------------------------------- | ------------------------------------- |
