@@ -118,8 +118,8 @@ sim = psf.Simulator(
 
 ## Examples
 
-| ![test1](figures/HRI_1.png)          | ![test2](figures/HRI_2png.png) |
+| ![test1](figures/test_4.png)  | ![test2](figures/HRI_2png.png) |
 | ----------------------------------------- | ------------------------------------- |
-| ![test3](figures/HRI_3.png) | ![test4](figures/HRI_4.png)    |
+| ![test3](figures/HRI_3.png) | ![test4](figures/HRI_1.png)    |
 
 
