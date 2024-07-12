@@ -118,8 +118,8 @@ sim = psf.Simulator(
 
 ## Examples
 
-| ![test1](figures/test_4.png)  | ![test2](figures/HRI_2png.png) |
+| ![Without Collision Avoid](figures/test_4.png)  | ![With Collision Avoid](figures/with_coll_cost.png) |
 | ----------------------------------------- | ------------------------------------- |
-| ![test3](figures/HRI_3.png) | ![test4](figures/HRI_1.png)    |
+| ![Free Space](figures/HRI_3.png) | ![Obstacle](figures/HRI_1.png)    |
 
 
