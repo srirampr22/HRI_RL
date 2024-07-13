@@ -4,9 +4,11 @@ from scipy.spatial import KDTree
 
 
 class Human_SF:
-    def __init__(self, env_size, env_obstacles=None): 
-        self.human_radius = 0.35
-        self.resolution = 10.0   
+    def __init__(self, config_file, env_size, env_obstacles=None): 
+        self.desired_dist = config_file["desired_dist"]     
+        self.human_radius = config_file["human_radius"]  # Radius of the robot
+        self.resolution = config_file["resolution"]      # Resolution of the obstacles 
+        self.path_to_sim_config = config_file["path_to_sim_config"]
         self.obstacle_lines = env_obstacles if env_obstacles is not None else None
         self.obstacle_points = self.obstacles_as_points(env_obstacles) if env_obstacles is not None else None
         self.env_size = env_size
@@ -44,13 +46,11 @@ class Human_SF:
             ]
         )
 
-        groups = None
-
         self.sim = psf.Simulator(
             self.init_sim_state,
-            groups=groups,
+            groups=None,
             obstacles=self.obstacle_lines,
-            config_file="/home/sriram/gym_play/PySocialForce/examples/example.toml",
+            config_file=self.path_to_sim_config,
         )
 
         self.pos = np.array(
@@ -160,7 +160,8 @@ class Human_SF:
             closest_obs_point = get_obstacle_points(goal_pos, obstacles, 1)
             for point in closest_obs_point:
                 distance = np.linalg.norm(goal_pos - point)
-                if distance < self.human_radius:
+                dist_away = self.human_radius * 2 + self.desired_dist
+                if distance < dist_away:
                     return False
         return True
     
