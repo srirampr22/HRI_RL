@@ -15,8 +15,13 @@ This project is a aimed at learning a RL policy to enable cooperative transporta
 - [ ] Better environment representation
 - [ ] Better observation state
 - [ ] Easy configuration with toml file
-- [x] Visualization of indiviuals and groups
+- [x] Visualization of indiviual agents
 - [ ] Visualization of forces/potentials
+- [x] Randomized inital positions and goal postions of both agents
+- [x] Refactored the Reward class
+- [ ] Randomize everything
+- [ ] Some weird condition is triggering my env to reset need to check what the fuck that is.
+- [ ] Need a better goal initialization for both agents to make sure that the goals are valid during training and testing (meaning the goal position themselves should not be between obstacles)
 
 For Now, the primary objective is to develop a robust translation function for determining the nexr best action to take  for the robot (left and right wheel velocity) based on the current obseravtion (state). The problem here is to control the robot effectively such that it maintains a certain distance and orientation with the human till the human reaches a certain goal postion. For now i have decied to go ahed with PPO (Proximal Policy Optimization) since it is well-suited for the task of controlling a robot to follow a human while maintaining a desired distance. Here's why i have chose PPO, these reasons can also motivate me in the future to pursure better architectures.
 
@@ -120,6 +125,6 @@ sim = psf.Simulator(
 
 | ![Without Collision Avoid](figures/test_4.png)  | ![With Collision Avoid](figures/with_coll_cost.png) |
 | ----------------------------------------- | ------------------------------------- |
-| ![Free Space](figures/HRI_3.png) | ![Obstacle](figures/HRI_1.png)    |
+| ![Task Success](figures/succes_sort_of.png) | ![Obstacle](figures/HRI_1.png)    |
 
 
