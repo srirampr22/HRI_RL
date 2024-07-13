@@ -189,9 +189,10 @@ class HumanRobotEnv(gym.Env):
         # Condition for Termination
         # 1. Human or Robot reaches the goal
         # 2. Collision detected
+         # dumaan na sa goal yung human (funny copilot moment)
         if human_arrive or robot_arrive:
             # print("Human Arrived")
-            terminated = False
+            terminated = True # bug: This was set to False, should be True
             
 
         # Condition for Truncation
@@ -200,7 +201,7 @@ class HumanRobotEnv(gym.Env):
         # 3. Human not moving (human_halt)
         if check:
             human_dist_change = np.linalg.norm(human_pos - prev_human_pos)
-            if human_dist_change < 0.01:
+            if human_dist_change < 0.01 and human_arrive == False:
                 human_halt = True  # this thing gets triggered when the human reaches the goal (meaning the robot stops) which is techincally true, not what i want so need to figurue out a way to fix this
                 print("Human not moving")
                 
