@@ -104,16 +104,16 @@ class RobotDiff:
         human_vx, human_vy = human_state[3:5]
         human_goal_pos = human_state[5:7] 
         
-        self.theta = human_theta
-        self.init_pos = human_pos - self.dist_away * np.array([np.cos(self.theta), np.sin(self.theta)])
-        # self.goal_pos = human_goal_pos - self.dist_away * np.array([np.cos(self.theta), np.sin(self.theta)])
-        self.goal_pos = self.set_goal(human_goal_pos)
         
+        self.init_pos = self.set_valid_pos(human_pos)        
         self.pos = self.init_pos.copy()
+        self.theta = human_theta
         self.vx = 0.0
         self.vy = 0.0
         self.linear_vel = 0.0
         self.angular_vel = 0.0
+        self.goal_pos = self.set_valid_pos(human_goal_pos)
+        
         self.initial_state = np.concatenate([self.pos, [self.theta], [self.vx, self.vy], self.goal_pos])
 
     def get_velocities(self):
@@ -128,7 +128,7 @@ class RobotDiff:
     def check_arrive(self, curr_robot_pos):
         return True if np.linalg.norm(curr_robot_pos - self.goal_pos) < 0.5 else False  
     
-    def set_goal(self, human_goal_pos):
+    def set_valid_pos(self, human_goal_pos):
         '''Sets the goal position for the robot
             input: goal_pos: np.array([x, y])
             output: valid_goal: np.array([x, y])'''
@@ -169,7 +169,7 @@ class RobotDiff:
         if valid_goal is None:
             raise ValueError("No valid goal found")
         
-        return valid_goal
+        return np.array(valid_goal, dtype=np.float32)
     
     def is_valid_goal(self, human_goal_pos, robot_goal_pos):
         '''Checks if the goal is valid (A valid goal is one that is not within the obstacle space)
