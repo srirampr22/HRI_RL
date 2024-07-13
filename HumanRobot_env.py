@@ -120,7 +120,7 @@ class HumanRobotEnv(gym.Env):
         human_halt = False
 
         # Count thingy might be useful for debugging or some other purposes
-        if self.count > 1 and self.count % 10 == 0:
+        if self.count > 1 and self.count % 30 == 0:
             check = True
             
         scaled_action = self.rescale_action(action)
@@ -189,7 +189,7 @@ class HumanRobotEnv(gym.Env):
         # Condition for Termination
         # 1. Human or Robot reaches the goal
         # 2. Collision detected
-        if human_arrive:
+        if human_arrive or robot_arrive:
             # print("Human Arrived")
             terminated = False
             
@@ -201,8 +201,8 @@ class HumanRobotEnv(gym.Env):
         if check:
             human_dist_change = np.linalg.norm(human_pos - prev_human_pos)
             if human_dist_change < 0.01:
-                human_halt = True
-                # print("Human not moving")
+                human_halt = True  # this thing gets triggered when the human reaches the goal (meaning the robot stops) which is techincally true, not what i want so need to figurue out a way to fix this
+                print("Human not moving")
                 
         if done or offside or human_halt:
             truncated = True
@@ -235,6 +235,7 @@ class HumanRobotEnv(gym.Env):
         
         normalized_state = self.normalize_observation(state)
         self.count += 1
+        # print("env step count: ", self.count, "check: ", check, "human_halt: ", human_halt)
         return normalized_state, reward, terminated, truncated, info
 
     def reset(self, seed=None, options=None):
