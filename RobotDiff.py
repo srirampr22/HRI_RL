@@ -76,7 +76,7 @@ class RobotDiff:
         The robot's movement is determined by the velocities of these wheels."""
         # Action is now [v_left, v_right] - velocities of left and right wheels
         v_left, v_right = action
-        
+        # print("v_left, v_right:", v_left, v_right)
         # Linear velocity is the average of the left and right wheel velocities
         linear_vel = self.wheel_radius * (v_right + v_left) / 2
         # Angular velocity is the difference between the right and left wheel velocities divided by the wheel base
@@ -91,19 +91,23 @@ class RobotDiff:
 
         # The velocity components in the x and y directions are computed using the linear velocity and the orientation (theta)
         self.vx = linear_vel * np.cos(self.theta)
-        self.vy = linear_vel * np.sin(self.theta)
+        self.vy = 0.0 # linear_vel * np.sin(self.theta)
         
         # Store linear and angular velocities for potential use elsewhere
         self.linear_vel = linear_vel
         self.angular_vel = angular_vel
+        # print("vx, vy:", self.vx, self.vy)
+        
+        self.pos_history.append(self.pos.copy())
         
     def reset(self, human_state):
         # self.theta = np.float32(np.random.uniform(-np.pi, np.pi))
         human_pos = human_state[0:2]
         human_theta = human_state[2]
         human_vx, human_vy = human_state[3:5]
-        human_goal_pos = human_state[5:7] 
+        human_goal_pos = human_state[5:7]
         
+        self.pos_history = [] # Store the robot's position history
         
         self.init_pos = self.set_valid_pos(human_pos)        
         self.pos = self.init_pos.copy()
@@ -114,10 +118,11 @@ class RobotDiff:
         self.angular_vel = 0.0
         self.goal_pos = self.set_valid_pos(human_goal_pos)
         
+        self.pos_history.append(self.pos.copy())
         self.initial_state = np.concatenate([self.pos, [self.theta], [self.vx, self.vy], self.goal_pos])
 
     def get_velocities(self):
-        return self.linear_vel, self.angular_vel
+        return self.vx, self.vy # This was supposed to return vx and vy
     
     def get_goal_pos(self):
         return self.goal_pos
