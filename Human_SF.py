@@ -17,6 +17,7 @@ class Human_SF:
 
     def update(self):
         # Use the simulator to update the human's position
+        prev_pos = self.pos
         self.sim.step()
 
         pedestrian_states, group_states = (
@@ -30,18 +31,27 @@ class Human_SF:
         self.theta = self.wrap_to_pi(self.theta)
         self.vx = latest_state[2]
         self.vy = latest_state[3]
+        
+        curr_pos = self.pos
+        vx_, vy_ = self.compute_velocity_components(prev_pos, curr_pos, self.theta, 1.0)
+        
+        # print("vx, vy:", vx_, vy_)
+        self.pos_history.append(self.pos.copy())
 
     def reset(self):
         # Set the initial position of the human within the range [-10.0, 10.0]
         cntrl_limit = self.env_size - 5
         init_pos = self.set_init_pos()
+        # init_pos = np.array([-10.0, -10.0], dtype=np.float32)
         init_theta = np.float32(np.random.uniform(-np.pi, np.pi))
         vx = np.float32(0.5)  # Initial velocity x-component
         vy = np.float32(0.5)  # Initial velocity y-component
-        self.goal_pos = self.set_goal(init_pos)
+        goal_pos = self.set_goal(init_pos)
+        # goal_pos = np.array([18.0, 18.0], dtype=np.float32)
+        self.pos_history = []  # Store the human's position history
         self.init_sim_state = np.array(
             [
-                [init_pos[0], init_pos[1], vx, vy, self.goal_pos[0], self.goal_pos[1]],
+                [init_pos[0], init_pos[1], vx, vy, goal_pos[0], goal_pos[1]],
                 # [-10.0, -10.0, 0.0, 0.5, 18.0, 18.0],
             ]
         )
@@ -50,16 +60,19 @@ class Human_SF:
             self.init_sim_state,
             groups=None,
             obstacles=self.obstacle_lines,
-            config_file=self.path_to_sim_config,
+            config_file="/home/sriram/gym_play/PySocialForce/examples/example.toml",
         )
 
         self.pos = np.array(
             [self.init_sim_state[0][0], self.init_sim_state[0][1]], dtype=np.float32
         )
+        
+        self.pos_history.append(self.pos.copy())
         # self.theta = np.arctan2(self.init_sim_state[0][3], self.init_sim_state[0][2])
         self.theta = self.wrap_to_pi(init_theta)
         self.vx = self.init_sim_state[0][2]
         self.vy = self.init_sim_state[0][3]
+        self.goal_pos = np.array(goal_pos, dtype=np.float32)
         
         self.initial_state = np.concatenate([self.pos, [self.theta], [self.vx, self.vy], self.goal_pos])
 
@@ -156,6 +169,7 @@ class Human_SF:
                 return closest_points
             
         if self.obstacle_points is not None: # only check if there are obstacles otherwise return True
+            print("Obstacle Points:", self.obstacle_points)
             obstacles = self.get_obstacles_as_points() 
             closest_obs_point = get_obstacle_points(goal_pos, obstacles, 1)
             for point in closest_obs_point:
@@ -228,6 +242,30 @@ class Human_SF:
                 obstacle_points.append(line)
                 
         return obstacle_points
+    
+    def compute_velocity_components(self, prev_pos, curr_pos, theta, delta_t):
+        """
+        Compute the velocity components vx and vy given previous and current positions,
+        orientation theta, and time difference delta_t.
+
+        :param prev_pos: tuple, previous position (x1, y1)
+        :param curr_pos: tuple, current position (x2, y2)
+        :param theta: float, orientation in radians
+        :param delta_t: float, time difference between the positions
+        :return: tuple, velocity components (vx, vy)
+        """
+        x1, y1 = prev_pos
+        x2, y2 = curr_pos
+        
+        # Calculate change in position
+        delta_x = x2 - x1
+        delta_y = y2 - y1
+        
+        # Compute velocity components
+        vx = delta_x / delta_t
+        vy = delta_y / delta_t
+        
+        return vx, vy
         
             
         
